@@ -24,9 +24,11 @@
 		
 		<div class="img__container">
 			<img src="" alt="" id="img-area">
-	
+			
 
 		</div>
+		<div class="error-format">format</div>
+		<div class="error-size">size</div>
 		<input type="file" id="imputs"/>
 		<div class="modal" style="display:none;">
 			<div class="modal__container">
@@ -38,7 +40,7 @@
 			</div>
 			
 		</div>
-		<script src="crop.js"></script>
+		<!-- <script src="crop.js"></script> -->
 		<script src="customCrop.js"></script>
 	</body>
 </html>

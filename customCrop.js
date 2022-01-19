@@ -2,6 +2,8 @@ const dropArea = document.querySelector('.img__container');
 const modal = document.querySelector('.modal');
 let modalImage = document.querySelector('#img-area-modal');
 let defImage = document.querySelector('#img-area');
+const errorFormat = document.querySelector('.error-format');
+const errorSize = document.querySelector('.error-size');
 let cropper;
 
 let fakeInput = document.createElement('input');
@@ -15,15 +17,9 @@ dropArea.addEventListener('click', function (e) {
 
 fakeInput.addEventListener('input', (e) => {
   e.preventDefault();
-  modal.classList.add('show');
   let img = e.target.files[0];
-  let imgInput = new FileReader();
-  imgInput.onload = (result) => {
-    modalImage.src = result.target.result;
-    checkShow();
-  };
-
-  imgInput.readAsDataURL(img);
+  console.log('file', img);
+  checkFormatSize(img);
 });
 
 dropArea.addEventListener('dragover', (e) => {
@@ -37,18 +33,18 @@ dropArea.addEventListener('dragleave', (e) => {
 
 dropArea.addEventListener('drop', (e) => {
   e.preventDefault();
-
+  console.log('truedasd');
   e.target.classList.remove('over');
-  modal.classList.add('show');
-  let file = e.dataTransfer.files[0];
-  let fileReader = new FileReader();
+  let img = e.dataTransfer.files[0];
+  checkFormatSize(img);
+  // let fileReader = new FileReader();
 
-  fileReader.onload = (result) => {
-    modalImage.src = result.target.result;
-    checkShow();
-  };
+  // fileReader.onload = (result) => {
+  //   modalImage.src = result.target.result;
+  //   checkShow();
+  // };
 
-  fileReader.readAsDataURL(file);
+  // fileReader.readAsDataURL(file);
 });
 
 let crop = document.querySelector('.crop');
@@ -96,4 +92,46 @@ const checkShow = (show) => {
     cropper.destroy();
     cropper = null;
   }
+};
+
+const isImage = (str) => /.+\.(?=png|jpe?g|gif|svg)/i.test(str);
+const isSize = (size) => {
+  const maxSize = 1;
+  const imgSize = size / (1024 * Math.pow(10, 3));
+  return imgSize < maxSize ? true : false;
+};
+
+const checkFormatSize = (img) => {
+  errorFormat.innerText = `${img.name}`;
+  errorFormat.style.color = 'inherit';
+  if (isImage(img.name) == true) {
+    if (isSize(img.size) == true) {
+      errorSize.innerText = `размер вашего изображения : ${(
+        img.size /
+        (1024 * Math.pow(10, 3))
+      ).toFixed(2)}мб`;
+      errorSize.style.color = 'inherit';
+      modal.classList.add('show');
+      imgOnload(img);
+    } else {
+      console.log('true', isSize(img.size) == false);
+      errorSize.innerText = ` слишком болшой размер ${(img.size / (1024 * Math.pow(10, 3))).toFixed(
+        2,
+      )}мб`;
+      errorSize.style.color = 'red';
+    }
+  } else {
+    errorFormat.innerText = `формат не поддерживается`;
+    errorFormat.style.color = 'red';
+    console.log('true', isImage(img.name) == false);
+  }
+};
+
+const imgOnload = (img) => {
+  let imgInput = new FileReader();
+  imgInput.onload = (result) => {
+    modalImage.src = result.target.result;
+    checkShow();
+  };
+  imgInput.readAsDataURL(img);
 };
